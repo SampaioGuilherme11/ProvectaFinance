@@ -43,14 +43,30 @@ import {
   TRANSACTION_TYPE_OPTIONS,
 } from "../_constants/transactions";
 import { DatePicker } from "./ui/date-picker";
+import { addTransaction } from "../_actions/add-transaction";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
     message: "O nome é obrigatório",
   }),
-  amount: z.string().trim().min(1, {
-    message: "O valor é obrigatório",
-  }),
+  amount: z
+    .string()
+    .trim()
+    .min(1, {
+      message: "O valor é obrigatório",
+    })
+    .refine(
+      (value) => {
+        const numericValue = parseFloat(
+          value.replace(/[^\d,.-]/g, "").replace(",", "."),
+        );
+        return numericValue > 0;
+      },
+      {
+        message: "O valor precisa ser positivo",
+      },
+    ),
   type: z.nativeEnum(TransactionType, {
     required_error: "O tipo é obrigatório",
   }),
@@ -68,6 +84,7 @@ const formSchema = z.object({
 type formSchema = z.infer<typeof formSchema>;
 
 const AddTransactionButton = () => {
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const form = useForm<formSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,13 +97,37 @@ const AddTransactionButton = () => {
     },
   });
 
-  const onSubmit = (data: formSchema) => {
-    console.log({ data });
+  const onSubmit = async (data: formSchema) => {
+    try {
+      const formattedAmount = data.amount
+        .replace(/[^\d,.-]/g, "")
+        .replace(".", "")
+        .replace(",", ".");
+
+      const amount = parseFloat(formattedAmount);
+
+      if (isNaN(amount)) {
+        throw new Error("Valor inválido.");
+      }
+
+      const dataWithAmountAsNumber = {
+        ...data,
+        amount,
+      };
+
+      await addTransaction(dataWithAmountAsNumber);
+      setDialogIsOpen(false);
+      form.reset();
+    } catch (error) {
+      console.error("Erro ao processar o valor:", error);
+    }
   };
 
   return (
     <Dialog
+      open={dialogIsOpen}
       onOpenChange={(open) => {
+        setDialogIsOpen(open);
         if (!open) {
           form.reset();
         }
