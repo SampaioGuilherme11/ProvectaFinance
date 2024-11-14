@@ -4,8 +4,13 @@ import {
   TransactionsPercentagePerType,
 } from "./types";
 import { db } from "@/app/_lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export const getDashboard = async (month: string | undefined) => {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
   const validMonth = month ?? new Date().toISOString().slice(5, 7); // Se month for undefined, usa o mês atual
   const formattedMonth = validMonth.padStart(2, "0");
 
@@ -15,6 +20,7 @@ export const getDashboard = async (month: string | undefined) => {
   endDate.setDate(0);
 
   const where = {
+    userId,
     date: {
       gte: startDate,
       lt: endDate,
