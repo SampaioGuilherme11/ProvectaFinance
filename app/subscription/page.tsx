@@ -53,7 +53,7 @@ const SubscriptionPage = async () => {
             </CardContent>
           </Card>
           <Card className="w-[450px]">
-            <CardHeader className="border-b border-solid py-8">
+            <CardHeader className="relative border-b border-solid py-8">
               {hasPremiumPlan && (
                 <Badge className="absolute left-4 top-12 bg-primary/10 text-primary">
                   Ativo
