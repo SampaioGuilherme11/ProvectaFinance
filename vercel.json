@@ -1,0 +1,12 @@
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "sua-url-do-banco-de-dados",
+    "PRISMA_GENERATE": "true"
+  }
+}
