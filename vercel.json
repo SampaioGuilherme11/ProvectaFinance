@@ -6,7 +6,7 @@
     }
   ],
   "env": {
-    "DATABASE_URL": "sua-url-do-banco-de-dados",
+    "DATABASE_URL": "process.env.DATABASE_URL",
     "PRISMA_GENERATE": "true"
   }
 }
