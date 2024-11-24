@@ -1,12 +1,12 @@
 {
+  "version": 3,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/node"
+      "src": "next.config.js",
+      "use": "@vercel/next"
     }
   ],
   "env": {
-    "DATABASE_URL": "process.env.DATABASE_URL",
-    "PRISMA_GENERATE": "true"
+    "DATABASE_URL": "process.env.DATABASE_URL"
   }
 }
